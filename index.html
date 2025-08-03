@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kule Asansör Bakım Sistemi</title>
+<style>
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #121212;
+    color: #eee;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  header {
+    position: relative;
+    background-color: #ff6f00;
+    color: white;
+    padding: 25px 20px;
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    box-shadow: 0 2px 10px rgba(255,111,0,0.8);
+    user-select: none;
+    z-index: 10;
+  }
+  #adminBtn {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    background-color: #222;
+    border: none;
+    color: #ff6f00;
+    font-weight: 900;
+    padding: 8px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 0 8px #ff6f0033;
+    transition: background-color 0.3s ease;
+    user-select: none;
+    font-size: 1rem;
+    z-index: 20;
+  }
+  #adminBtn:hover, #adminBtn:focus {
+    background-color: #333;
+    outline: none;
+  }
+  main {
+    max-width: 1000px;
+    margin: 30px auto;
+    background-color: #1c1c1c;
+    border-radius: 12px;
+    padding: 30px 25px;
+    box-shadow: 0 0 30px #ff6f0077;
+    min-height: 500px;
+  }
+  h2, h3 {
+    margin-top: 0;
+    color: #ff9100;
+    font-weight: 900;
+    text-align: center;
+    user-select: none;
+  }
+  label {
+    font-weight: 700;
+    color: #ffb74d;
+    display: block;
+    margin-bottom: 6px;
+    user-select: none;
+  }
+  input[type="text"], input[type="password"], textarea {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: 2px solid #ff9100;
+    background-color: #222;
+    color: #eee;
+    box-sizing: border-box;
+    resize: vertical;
+    margin-bottom: 18px;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+    border-color: #ffa726;
+    outline: none;
+  }
+  textarea {
+    min-height: 90px;
+  }
+  button {
+    background-color: #ff6f00;
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    font-weight: 800;
+    font-size: 1.15rem;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 5px 12px #ff6f0055;
+    transition: background-color 0.25s ease;
+    user-select: none;
+  }
+  button:hover, button:focus {
+    background-color: #ff8f00;
+    outline: none;
+  }
+  button.btn-danger {
+    background-color: #d32f2f;
+    box-shadow: 0 5px 12px rgba(211,47,47,0.6);
+  }
+  button.btn-danger:hover, button.btn-danger:focus {
+    background-color: #b71c1c;
+  }
+  button.btn-secondary {
+    background-color: #757575;
+    box-shadow: 0 5px 12px rgba(117,117,117,0.6);
+  }
+  button.btn-secondary:hover, button.btn-secondary:focus {
+    background-color: #616161;
+  }
+  .error-msg {
+    color: #e53935;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #222;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 0 20px #ff6f0033;
+  }
+  th, td {
+    padding: 15px 18px;
+    border-bottom: 1px solid #ff6f0044;
+    text-align: left;
+    color: #ffcc80cc;
+    word-break: break-word;
+  }
+  th {
+    background-color: #ff6f00cc;
+    color: #222;
+    font-weight: 900;
+    user-select: none;
+  }
+  td.actions button {
+    margin-right: 8px;
+  }
+  .tick-icon {
+    color: #81c784;
+    font-weight: 900;
+    margin-right: 6px;
+    user-select: none;
+  }
+  #adminLoginModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  #adminLoginModal .modal-content {
+    background-color: #222;
+    padding: 30px 25px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 0 50px #ff6f0055;
+  }
+  #adminLoginModal h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    text-align: center;
+    color: #ffb74d;
+    font-weight: 900;
+    user-select: none;
+  }
+  #logoutBtn {
+    float: right;
+    background-color: #ff6f00;
+    border: none;
+    color: white;
+    font-weight: 900;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px #ff6f0099;
+    user-select: none;
+  }
+  #logoutBtn:hover, #logoutBtn:focus {
+    background-color: #ff8f00;
+    outline: none;
+  }
+  .checkbox-group {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .checkbox-group label {
+    font-weight: 700;
+    color: #ffcc80;
+    cursor: pointer;
+    user-select: none;
+  }
+  .checkbox-group input[type="checkbox"] {
+    transform: scale(1.3);
+    margin-right: 7px;
+    cursor: pointer;
+  }
+  @media (max-width: 600px) {
+    main {
+      padding: 20px 15px;
+    }
+    table, thead, tbody, th, td, tr {
+      display: block;
+    }
+    thead tr {
+      display: none;
+    }
+    tr {
+      margin-bottom: 18px;
+      border: 1px solid #ff6f0040;
+      border-radius: 12px;
+      padding: 15px;
+    }
+    td {
+      padding-left: 50%;
+      position: relative;
+      text-align: left;
+      color: #ffcc80cc;
+      border-bottom: none;
+      word-wrap: break-word;
+    }
+    td::before {
+      position: absolute;
+      top: 16px;
+      left: 14px;
+      width: 45%;
+      white-space: nowrap;
+      font-weight: 700;
+      color: #ffb74d;
+      user-select: none;
+    }
+    td:nth-of-type(1)::before { content: "Seri No"; }
+    td:nth-of-type(2)::before { content: "Son Bakım Tarihi"; }
+    td:nth-of-type(3)::before { content: "Yapılan İşlemler"; }
+    td:nth-of-type(4)::before { content: "Notlar"; }
+    td:nth-of-type(5)::before { content: "İşlemler"; }
+    button {
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    #adminBtn {
+      top: 12px;
+      right: 12px;
+      padding: 6px 10px;
+      font-size: 0.9rem;
+    }
+    header {
+      padding: 30px 15px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  Kule Asansör Bakım Sistemi
+  <button id="adminBtn" aria-label="Admin Paneline Git">Admin</button>
+</header>
+
+<main>
+
+  <!-- Sorgulama Ekranı -->
+  <section id="sorgulamaEkrani" aria-label="Bakım Sorgulama Ekranı">
+    <h2>Asansör Bakım Sorgulama</h2>
+    <form id="sorguForm" novalidate>
+      <label for="sorguSeriNo">Asansör Seri Numarası</label>
+      <input type="text" id="sorguSeriNo" autocomplete="off" placeholder="Seri numarasını girin" required aria-required="true" />
+      <button type="submit" aria-label="Bakım sorgula">Sorgula</button>
+    </form>
+    <div id="sorguSonuc" style="margin-top:30px; font-weight:700; color:#ffb74d;"></div>
+  </section>
+
+  <!-- Admin Giriş Modal -->
+  <div id="adminLoginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" tabindex="-1" style="display:none;">
+    <div class="modal-content">
+      <h2 id="loginTitle">Yönetici Girişi</h2>
+      <form id="loginForm" novalidate>
+        <label for="admUser">Kullanıcı Adı</label>
+        <input type="text" id="admUser" autocomplete="username" required aria-required="true" />
+        <label for="admPass">Şifre</label>
+        <input type="password" id="admPass" autocomplete="current-password" required aria-required="true" />
+        <div class="error-msg" id="loginError" aria-live="assertive"></div>
+        <button type="submit" aria-label="Giriş Yap">Giriş Yap</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <section id="adminPanel" style="display:none;" aria-label="Yönetici Paneli">
+    <button id="logoutBtn" aria-label="Çıkış yap">Çıkış</button>
+    <h2>Yönetici Paneli</h2>
+
+    <form id="bakimForm" novalidate>
+      <label for="seriNo">Seri No <span aria-hidden="true" style="color:#ff6666;">*</span></label>
+      <input type="text" id="seriNo" autocomplete="off" required aria-required="true" placeholder="Seri numarasını girin" />
+      <div class="error-msg" id="seriNoError" style="display:none;">Seri numarası zorunludur.</div>
+
+      <fieldset class="checkbox-group" aria-describedby="islemDesc">
+        <legend id="islemDesc" style="color:#ffb74d; font-weight:700;">Yapılan İşlemler</legend>
+        <label><input type="checkbox" id="chk1" /> Asansör kuyusu temizlendi</label>
+        <label><input type="checkbox" id="chk2" /> Halat kontrolü yapıldı</label>
+        <label><input type="checkbox" id="chk3" /> Kapı motoru bakımı yapıldı</label>
+      </fieldset>
+
+      <label for="counterNote">Notlar</label>
+      <textarea id="counterNote" placeholder="Ek notlar..."></textarea>
+
+      <div style="text-align:right; margin-bottom: 30px;">
+        <button type="submit" id="saveBtn" aria-label="Bakım kaydını kaydet">Kaydet</button>
+        <button type="button" class="btn-secondary" id="cancelEdit" style="display:none;" aria-label="Düzenlemeyi iptal et">İptal</button>
+      </div>
+    </form>
+
+    <h3>Kayıtlı Bakımlar</h3>
+    <table role="grid" aria-label="Kayıtlı Bakımlar Tablosu">
+      <thead>
+        <tr>
+          <th>Seri No</th>
+          <th>Son Bakım Tarihi</th>
+          <th>Yapılan İşlemler</th>
+          <th>Notlar</th>
+          <th>İşlemler</th>
+        </tr>
+      </thead>
+      <tbody id="bakimList" aria-live="polite" aria-relevant="additions removals"></tbody>
+    </table>
+  </section>
+</main>
+
+<script>
+  const adminBtn = document.getElementById('adminBtn');
+  const sorgulamaEkrani = document.getElementById('sorgulamaEkrani');
+  const adminLoginModal = document.getElementById('adminLoginModal');
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const adminPanel = document.getElementById('adminPanel');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  const bakimForm = document.getElementById('bakimForm');
+  const seriNoInput = document.getElementById('seriNo');
+  const chk1 = document.getElementById('chk1');
+  const chk2 = document.getElementById('chk2');
+  const chk3 = document.getElementById('chk3');
+  const counterNote = document.getElementById('counterNote');
+  const bakimList = document.getElementById('bakimList');
+  const saveBtn = document.getElementById('saveBtn');
+  const cancelEditBtn = document.getElementById('cancelEdit');
+  const seriNoError = document.getElementById('seriNoError');
+
+  const sorguForm = document.getElementById('sorguForm');
+  const sorguSeriNo = document.getElementById('sorguSeriNo');
+  const sorguSonuc = document.getElementById('sorguSonuc');
+
+  // Kayıtları localStorage'dan al veya boş dizi
+  let bakimVerileri = JSON.parse(localStorage.getItem('bakimVerileri') || '[]');
+  let editIndex = null;
+
+  // İlk açılış: sorgulama ekranı açık, admin panel kapalı, login modal kapalı
+  function ekranlariAyarla() {
+    sorgulamaEkrani.style.display = 'block';
+    adminPanel.style.display = 'none';
+    adminLoginModal.style.display = 'none';
+  }
+  ekranlariAyarla();
+
+  // Admin butonu tıklanınca login modal açılır
+  adminBtn.addEventListener('click', () => {
+    loginForm.reset();
+    loginError.textContent = '';
+    adminLoginModal.style.display = 'flex';
+  });
+
+  // Admin giriş formu submit
+  loginForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const username = document.getElementById('admUser').value.trim();
+    const password = document.getElementById('admPass').value.trim();
+
+    if (username === 'admin' && password === '1234') {
+      loginError.textContent = '';
+      adminLoginModal.style.display = 'none';
+      sorgulamaEkrani.style.display = 'none';
+      adminPanel.style.display = 'block';
+      listele();
+      formTemizle();
+      seriNoInput.focus();
+    } else {
+      loginError.textContent = 'Kullanıcı adı veya şifre yanlış, amk!';
+    }
+  });
+
+  // Çıkış butonu admin panelde
+  logoutBtn.addEventListener('click', () => {
+    adminPanel.style.display = 'none';
+    sorgulamaEkrani.style.display = 'block';
+  });
+
+  // Kayıtları listele admin panelde
+  function listele() {
+    if (bakimVerileri.length === 0) {
+      bakimList.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#ccc;">Kayıt bulunamadı.</td></tr>`;
+      return;
+    }
+    bakimList.innerHTML = bakimVerileri.map((kayit, i) => {
+      const islemler = [];
+      if (kayit.islem1) islemler.push('<span class="tick-icon" aria-label="Onaylandı">✔</span>Asansör kuyusu temizlendi');
+      if (kayit.islem2) islemler.push('<span class="tick-icon" aria-label="Onaylandı">✔</span>Halat kontrolü yapıldı');
+      if (kayit.islem3) islemler.push('<span class="tick-icon" aria-label="Onaylandı">✔</span>Kapı motoru bakımı yapıldı');
+
+      return `
+        <tr>
+          <td>${kayit.seriNo}</td>
+          <td>${kayit.sonBakimTarihi}</td>
+          <td>${islemler.length > 0 ? islemler.join('<br>') : '-'}</td>
+          <td>${kayit.notlar || '-'}</td>
+          <td class="actions">
+            <button class="btn-secondary" data-index="${i}" aria-label="Düzenle">Düzenle</button>
+            <button class="btn-danger" data-index="${i}" aria-label="Sil">Sil</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // Formdan veri oku ve Son Bakım Tarihinden otomatik 30 gün sonraki tarih hesapla
+  function kaydet() {
+    const seriNo = seriNoInput.value.trim();
+    if (!seriNo) {
+      seriNoError.style.display = 'block';
+      seriNoInput.focus();
+      return false;
+    }
+    seriNoError.style.display = 'none';
+
+    // Son bakım tarihi bugünün tarihi
+    const bugun = new Date();
+    const sonBakimTarihi = bugun.toLocaleDateString('tr-TR');
+
+    // Otomatik sonraki bakım tarihi: bugünden 30 gün sonrası
+    const sonrakiBakim = new Date(bugun.getTime() + 30 * 24 * 60 * 60 * 1000);
+    const sonrakiBakimStr = sonrakiBakim.toLocaleDateString('tr-TR');
+
+    const yeniKayit = {
+      seriNo: seriNo,
+      sonBakimTarihi: sonBakimTarihi,
+      sonrakiBakimTarihi: sonrakiBakimStr,
+      islem1: chk1.checked,
+      islem2: chk2.checked,
+      islem3: chk3.checked,
+      notlar: counterNote.value.trim()
+    };
+
+    if (editIndex !== null) {
+      bakimVerileri[editIndex] = yeniKayit;
+      editIndex = null;
+    } else {
+      bakimVerileri.push(yeniKayit);
+    }
+
+    localStorage.setItem('bakimVerileri', JSON.stringify(bakimVerileri));
+    listele();
+    formTemizle();
+    return true;
+  }
+
+  // Formu temizle ve iptal butonunu gizle
+  function formTemizle() {
+    bakimForm.reset();
+    seriNoError.style.display = 'none';
+    cancelEditBtn.style.display = 'none';
+    saveBtn.textContent = 'Kaydet';
+    seriNoInput.disabled = false;
+  }
+
+  // Düzenleme işlemi
+  bakimList.addEventListener('click', e => {
+    if (e.target.tagName === 'BUTTON') {
+      const i = e.target.getAttribute('data-index');
+      if (e.target.classList.contains('btn-danger')) {
+        // Sil
+        if (confirm('Kayıt silinsin mi amk?')) {
+          bakimVerileri.splice(i, 1);
+          localStorage.setItem('bakimVerileri', JSON.stringify(bakimVerileri));
+          listele();
+          formTemizle();
+        }
+      } else if (e.target.classList.contains('btn-secondary')) {
+        // Düzenle
+        const kayit = bakimVerileri[i];
+        seriNoInput.value = kayit.seriNo;
+        chk1.checked = kayit.islem1;
+        chk2.checked = kayit.islem2;
+        chk3.checked = kayit.islem3;
+        counterNote.value = kayit.notlar;
+        editIndex = i;
+        cancelEditBtn.style.display = 'inline-block';
+        saveBtn.textContent = 'Güncelle';
+        seriNoInput.disabled = true;
+        seriNoInput.focus();
+      }
+    }
+  });
+
+  // İptal butonu düzenlemeyi iptal eder
+  cancelEditBtn.addEventListener('click', e => {
+    formTemizle();
+  });
+
+  // Form submit
+  bakimForm.addEventListener('submit', e => {
+    e.preventDefault();
+    kaydet();
+  });
+
+  // Sorgulama formu submit
+  sorguForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const seriNo = sorguSeriNo.value.trim();
+    if (!seriNo) {
+      sorguSonuc.textContent = 'Seri numarasını gir amk!';
+      return;
+    }
+    const kayit = bakimVerileri.find(k => k.seriNo.toLowerCase() === seriNo.toLowerCase());
+    if (kayit) {
+      sorguSonuc.innerHTML = `
+        <strong>Son Bakım Tarihi:</strong> ${kayit.sonBakimTarihi}<br>
+        <strong>Sonraki Bakım Tarihi:</strong> ${kayit.sonrakiBakimTarihi}<br>
+        <strong>Yapılan İşlemler:</strong> 
+        <ul>
+          ${kayit.islem1 ? '<li>Asansör kuyusu temizlendi</li>' : ''}
+          ${kayit.islem2 ? '<li>Halat kontrolü yapıldı</li>' : ''}
+          ${kayit.islem3 ? '<li>Kapı motoru bakımı yapıldı</li>' : ''}
+          ${(!kayit.islem1 && !kayit.islem2 && !kayit.islem3) ? '<li>Yapılan işlem yok</li>' : ''}
+        </ul>
+        <strong>Notlar:</strong> ${kayit.notlar || '-'}
+      `;
+    } else {
+      sorguSonuc.textContent = 'Kayıt bulunamadı amk!';
+    }
+  });
+</script>
+
+</body>
+</html>
